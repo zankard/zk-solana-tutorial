@@ -21,3 +21,10 @@ prepare-phase2:
 
 verify-ptau:
 	$(SNARKJS) powersoftau verify $(SETUP_DIR)/pot12_final.ptau 
+
+final-zkey:
+	$(SNARKJS) zkey new $(BUILD)/circuits/multiplier.r1cs $(SETUP_DIR)/pot12_final.ptau $(BUILD)/multiplier_0000.zkey
+	echo "some random text" | $(SNARKJS) zkey contribute $(BUILD)/multiplier_0000.zkey $(BUILD)/multiplier_final.zkey --name="1st Contributor" -v -e="more random text"
+	$(SNARKJS) zkey export verificationkey $(BUILD)/multiplier_final.zkey $(BUILD)/verification_key.json
+	rm $(BUILD)/multiplier_0000.zkey
+
