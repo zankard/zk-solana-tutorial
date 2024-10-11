@@ -7,18 +7,11 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use ark_serialize::{CanonicalDeserialize, CanonicalSerialize, Compress, Validate};
-    //use ark_std::io::prelude::*;
-    //use groth16_solana::groth16::Groth16Verifyingkey;
     use std::ops::Neg;
     use groth16_solana::groth16::Groth16Verifier;
     use crate::verifying_key;
 
     type G1 = ark_bn254::g1::G1Affine;
-
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
 
     fn change_endianness(bytes: &[u8]) -> Vec<u8> {
         let mut vec = Vec::new();
