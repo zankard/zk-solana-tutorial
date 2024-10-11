@@ -6,10 +6,10 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use ark_serialize::{CanonicalDeserialize, CanonicalSerialize, Compress, Validate};
-    use std::ops::Neg;
-    use groth16_solana::groth16::Groth16Verifier;
     use crate::verifying_key;
+    use ark_serialize::{CanonicalDeserialize, CanonicalSerialize, Compress, Validate};
+    use groth16_solana::groth16::Groth16Verifier;
+    use std::ops::Neg;
 
     type G1 = ark_bn254::g1::G1Affine;
 
@@ -42,17 +42,15 @@ mod tests {
             119, 248, 214, 26, 231, 41,
         ];
         const PUBLIC_INPUTS_2: [[u8; 32]; 1] = [[
-            0, 0, 0, 0,  0, 0, 0, 0, 0,
-            0, 0, 0, 0,  0, 0, 0, 0, 0,
-            0, 0, 0, 0,  0, 0, 0, 0, 0,
-            0, 0, 0, 0, 12
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 12,
         ]];
         let proof_a: G1 = G1::deserialize_with_mode(
             &*[&change_endianness(&PROOF_2[0..64]), &[0u8][..]].concat(),
             Compress::No,
             Validate::Yes,
         )
-            .unwrap();
+        .unwrap();
 
         let mut proof_a_neg = [0u8; 65];
         proof_a
@@ -62,13 +60,22 @@ mod tests {
             .unwrap();
 
         proof_a
-            .neg().y.serialize_with_mode(&mut proof_a_neg[32..], Compress::No).unwrap();
+            .neg()
+            .y
+            .serialize_with_mode(&mut proof_a_neg[32..], Compress::No)
+            .unwrap();
         let proof_a = change_endianness(&proof_a_neg[..64]).try_into().unwrap();
         let proof_b = PROOF_2[64..192].try_into().unwrap();
         let proof_c = PROOF_2[192..256].try_into().unwrap();
 
-        let mut verifier = Groth16Verifier::new(&proof_a, &proof_b, &proof_c,
-        &PUBLIC_INPUTS_2, &verifying_key::VERIFYINGKEY).unwrap();
+        let mut verifier = Groth16Verifier::new(
+            &proof_a,
+            &proof_b,
+            &proof_c,
+            &PUBLIC_INPUTS_2,
+            &verifying_key::VERIFYINGKEY,
+        )
+        .unwrap();
         verifier.verify().unwrap();
     }
 }
